@@ -32,6 +32,7 @@ const Cart = () => {
         title: data[key].title,
         price: data[key].price,
         description: data[key].description,
+        quantity: data[key].quantity,
       });
     }
   }

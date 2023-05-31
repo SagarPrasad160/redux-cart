@@ -31,7 +31,7 @@ const CartButton = (props) => {
   return (
     <button className={classes.button} onClick={handleCartDisplay}>
       <span>My Cart</span>
-      <span className={classes.badge}>{cartSize ? cartSize : "..."}</span>
+      <span className={classes.badge}>{cartSize ? cartSize : "0"}</span>
     </button>
   );
 };

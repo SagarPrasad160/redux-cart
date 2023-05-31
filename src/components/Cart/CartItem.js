@@ -8,6 +8,7 @@ import {
 } from "../../store";
 
 const CartItem = ({ item }) => {
+  console.log(item);
   const { title, quantity, price } = item;
 
   const { data, isFetching, error } = useFetchItemsQuery();
