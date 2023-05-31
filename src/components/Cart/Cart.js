@@ -6,12 +6,14 @@ import { useFetchItemsQuery } from "../../store";
 
 import { useSelector } from "react-redux";
 
+import { deserializeData } from "../../helpers/results";
+
 const Cart = () => {
   const { data, isFetching, error } = useFetchItemsQuery();
 
   const showCart = useSelector((state) => state.showCart);
 
-  if (isFetching) {
+  if (isFetching && showCart) {
     return (
       <Card className={classes.cart}>
         <h2>loading...</h2>
@@ -24,17 +26,7 @@ const Cart = () => {
       </Card>
     );
   } else {
-    console.log(data);
-    var results = [];
-    for (let key in data) {
-      results.push({
-        id: key,
-        title: data[key].title,
-        price: data[key].price,
-        description: data[key].description,
-        quantity: data[key].quantity,
-      });
-    }
+    var results = deserializeData(data);
   }
 
   if (results.length === 0 && showCart) {

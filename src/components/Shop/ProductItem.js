@@ -3,6 +3,8 @@ import classes from "./ProductItem.module.css";
 
 import { useAddItemMutation, useFetchItemsQuery } from "../../store";
 
+import { deserializeData } from "../../helpers/results";
+
 const ProductItem = ({ item }) => {
   const { title, price, description } = item;
 
@@ -12,7 +14,6 @@ const ProductItem = ({ item }) => {
   console.log(results);
 
   if (!error && !isFetching) {
-    var cartItems = [];
     console.log(data);
     // if there is no id for item yet
     if (!item.id) {
@@ -23,15 +24,7 @@ const ProductItem = ({ item }) => {
         }
       }
     }
-    for (let key in data) {
-      cartItems.push({
-        id: key,
-        title: data[key].title,
-        price: data[key].price,
-        description: data[key].description,
-        quantity: data[key].quantity,
-      });
-    }
+    var cartItems = deserializeData(data);
   }
 
   const handleClick = () => {

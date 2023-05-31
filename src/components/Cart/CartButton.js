@@ -6,21 +6,14 @@ import { toggleCartDisplay } from "../../store/cartSlice";
 
 import { useFetchItemsQuery } from "../../store";
 
+import { deserializeData } from "../../helpers/results";
+
 const CartButton = (props) => {
   const { data, isFetching, error } = useFetchItemsQuery();
 
-  let cartSize;
-  if (data && !isFetching) {
-    var results = [];
-    for (let key in data) {
-      results.push({
-        id: key,
-        title: data[key].title,
-        price: data[key].price,
-        description: data[key].description,
-      });
-    }
-    cartSize = results.length;
+  let cartSize = 0;
+  if (!error && !isFetching) {
+    cartSize = deserializeData(data).length;
   }
 
   const dispatch = useDispatch();
@@ -31,7 +24,7 @@ const CartButton = (props) => {
   return (
     <button className={classes.button} onClick={handleCartDisplay}>
       <span>My Cart</span>
-      <span className={classes.badge}>{cartSize ? cartSize : "0"}</span>
+      <span className={classes.badge}>{cartSize}</span>
     </button>
   );
 };

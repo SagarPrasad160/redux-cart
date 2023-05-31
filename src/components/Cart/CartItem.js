@@ -7,6 +7,8 @@ import {
   useRemoveItemMutation,
 } from "../../store";
 
+import { deserializeData } from "../../helpers/results";
+
 const CartItem = ({ item }) => {
   console.log(item);
   const { title, quantity, price } = item;
@@ -17,16 +19,7 @@ const CartItem = ({ item }) => {
   const [removeItem, removeResults] = useRemoveItemMutation();
 
   if (!isFetching && !error) {
-    var cartItems = [];
-    for (let key in data) {
-      cartItems.push({
-        id: key,
-        title: data[key].title,
-        price: data[key].price,
-        description: data[key].description,
-        quantity: data[key].quantity ? data[key].quantity : 1,
-      });
-    }
+    var cartItems = deserializeData(data);
   }
 
   console.log("item update status:", updateResults);
