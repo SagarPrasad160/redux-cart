@@ -1,13 +1,27 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/dist/query";
+import { toggleCartDisplay } from "./cartSlice";
 
-import { addToCart, removeFromCart, toggleCartDisplay } from "./cartSlice";
+import { cartReducer, cartSlice } from "./cartSlice";
 
-import { cartReducer } from "./cartSlice";
+import { cartItemsApi } from "../apis/cartItemsApi";
 
 export const store = configureStore({
   reducer: {
-    cart: cartReducer,
+    [cartSlice.name]: cartReducer,
+    [cartItemsApi.reducerPath]: cartItemsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat(cartItemsApi.middleware);
   },
 });
 
-export { addToCart, removeFromCart, toggleCartDisplay };
+setupListeners(store.dispatch);
+
+export { toggleCartDisplay };
+export {
+  useFetchItemsQuery,
+  useAddItemMutation,
+  useRemoveItemMutation,
+  useUpdateItemMutation,
+} from "../apis/cartItemsApi";

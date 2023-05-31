@@ -4,9 +4,26 @@ import { useDispatch } from "react-redux";
 
 import { toggleCartDisplay } from "../../store/cartSlice";
 
-const CartButton = (props) => {
-  const dispatch = useDispatch();
+import { useFetchItemsQuery } from "../../store";
 
+const CartButton = (props) => {
+  const { data, isFetching, error } = useFetchItemsQuery();
+
+  let cartSize;
+  if (data && !isFetching) {
+    var results = [];
+    for (let key in data) {
+      results.push({
+        id: key,
+        title: data[key].title,
+        price: data[key].price,
+        description: data[key].description,
+      });
+    }
+    cartSize = results.length;
+  }
+
+  const dispatch = useDispatch();
   const handleCartDisplay = () => {
     dispatch(toggleCartDisplay());
   };
@@ -14,7 +31,7 @@ const CartButton = (props) => {
   return (
     <button className={classes.button} onClick={handleCartDisplay}>
       <span>My Cart</span>
-      <span className={classes.badge}>1</span>
+      <span className={classes.badge}>{cartSize ? cartSize : "..."}</span>
     </button>
   );
 };

@@ -1,18 +1,79 @@
 import classes from "./CartItem.module.css";
 
-import { useDispatch } from "react-redux";
-import { addToCart, removeFromCart } from "../../store";
+import {
+  useFetchItemsQuery,
+  useUpdateItemMutation,
+  useAddItemMutation,
+  useRemoveItemMutation,
+} from "../../store";
 
 const CartItem = ({ item }) => {
   const { title, quantity, price } = item;
 
-  const dispatch = useDispatch();
+  const { data, isFetching, error } = useFetchItemsQuery();
+  const [updateItem, updateResults] = useUpdateItemMutation();
+  const [addItem, addResults] = useAddItemMutation();
+  const [removeItem, removeResults] = useRemoveItemMutation();
+
+  if (!isFetching && !error) {
+    var cartItems = [];
+    for (let key in data) {
+      cartItems.push({
+        id: key,
+        title: data[key].title,
+        price: data[key].price,
+        description: data[key].description,
+        quantity: data[key].quantity ? data[key].quantity : 1,
+      });
+    }
+  }
+
+  console.log("item update status:", updateResults);
+  console.log("adding item status", addResults);
+  console.log("removing item status", removeResults);
 
   const handleAdd = () => {
-    dispatch(addToCart(item));
+    // check if the item is already present in results
+    const idx = cartItems.findIndex((cartItem) => cartItem.id === item.id);
+    console.log(idx);
+    if (idx >= 0) {
+      // item exists, make request to update the item quantity in the database
+
+      const existingItem = cartItems[idx];
+      let updatedItem = { ...existingItem };
+
+      console.log(existingItem);
+      if (existingItem.quantity) {
+        // Increment the quantity by 1 if it exists
+        updatedItem.quantity += 1;
+      } else {
+        // Set the quantity to 2 if it doesn't exist
+        updatedItem.quantity = 2;
+      }
+      console.log(updatedItem);
+      updateItem({ itemId: cartItems[idx].id, newItem: updatedItem });
+    } else {
+      // item is not there yet add it
+      addItem(item);
+    }
   };
+
   const handleRemove = () => {
-    dispatch(removeFromCart(item));
+    const idx = cartItems.findIndex((cartItem) => cartItem.id === item.id);
+    if (idx >= 0) {
+      // item is already present in cart, check if the qty is greater than 1
+      if (cartItems[idx].quantity > 1) {
+        const updatedItem = {
+          ...cartItems[idx],
+          quantity: cartItems[idx].quantity - 1,
+        };
+        updateItem({ itemId: cartItems[idx].id, newItem: updatedItem });
+      }
+      if (cartItems[idx].quantity === 1) {
+        console.log("item to deleted", cartItems[idx]);
+        removeItem(cartItems[idx].id);
+      }
+    }
   };
 
   return (

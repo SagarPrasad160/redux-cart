@@ -1,17 +1,17 @@
 import Card from "../UI/Card";
 import classes from "./ProductItem.module.css";
 
-import { useDispatch } from "react-redux";
-
-import { addToCart } from "../../store/cartSlice";
+import { useAddItemMutation } from "../../store";
 
 const ProductItem = ({ item }) => {
   const { title, price, description } = item;
 
-  const dispatch = useDispatch();
+  const [addItem, results] = useAddItemMutation();
+
+  console.log(results);
 
   const handleClick = () => {
-    dispatch(addToCart(item));
+    addItem(item);
   };
 
   return (
